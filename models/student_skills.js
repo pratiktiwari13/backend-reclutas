@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false
     },
-    student_skill: {
+    skill_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false
     },
@@ -27,6 +27,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
-    tableName: 'student_skills'
+    tableName: 'student_skills',
+      timestamps:false
   });
 };

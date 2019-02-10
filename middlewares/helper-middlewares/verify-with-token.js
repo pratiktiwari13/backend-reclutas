@@ -1,6 +1,6 @@
-var jwt  = require("jsonwebtoken");
-var config = require("../../config");
-//var userRoleModel = require("../../helpers/connectdb").getConnectionObject().import("../../models/user_role");
+const jwt  = require("jsonwebtoken");
+const config = require("../../config");
+const users = require("../../helpers/connectdb").getConnectionObject().import("../../models/users");
 
 module.exports = {
     verifyUsers:async function(req,res,next){
@@ -14,16 +14,19 @@ module.exports = {
                 req.body.id = decoded.id;
                 req.body.role = decoded.role;
                 req.body.email = decoded.email;
-                if(!decoded.isFullyRegistered)
-                    res.send("Not Fully Registered, redirect to remaining details page");
-                else if(decoded.isFirstLogin)
-                    res.send("Redirect to password change page");
+                let details = await users.find({attributes:['is_fully_registered','is_first_login'],where:{user_id:req.body.id}});
+
+                if(!details.is_fully_registered)
+                    res.send({err:"Not Fully Registered, redirect to remaining details page"});
+                else if(details.is_first_login)
+                    res.send({err:"Redirect to password change page"});
                 else
                     next();
             }
         }
         catch(err){
-            res.send("Auth Failure:- Forged Token");
+            throw err;
+            //res.send("Auth Failure:- Forged Token");
         }
     },
     checkPasswordChangeToken:async function(req,res,next){

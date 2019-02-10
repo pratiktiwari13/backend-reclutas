@@ -5,5 +5,8 @@ module.exports = function (req,res,next) {
         case "STUDENT":
                 studentLocalsMiddleware(req,res,next);
             break;
+        case "ADMIN":
+
+            break;
     }
 };

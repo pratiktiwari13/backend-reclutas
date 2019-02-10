@@ -2,9 +2,9 @@ const urlMeta = require('url-metadata');
 
 module.exports = {
     extract:async function (req,res,next) {
-        if(isUrlValid(req.body.data.news_feed.news_feed_name)){
+        if(isUrlValid(req.body.data.news_feed.news_feed_text)){
             try {
-                let data = await urlMeta(req.body.data.news_feed.news_feed_name);
+                let data = await urlMeta(req.body.data.news_feed.news_feed_text);
                 req.body.data.news_feed.link_meta = JSON.stringify(data);
                 //console.log(req.body.news_feed.link_meta);
                 next();

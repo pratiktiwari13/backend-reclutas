@@ -104,15 +104,15 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(7),
       allowNull: true
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: true
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: true
     },
-    deleted_at: {
+    deletedAt: {
       type: DataTypes.DATE,
       allowNull: true
     },
@@ -121,6 +121,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
-    tableName: 'student'
+    tableName: 'student',
+      timestamps:false
   });
 };

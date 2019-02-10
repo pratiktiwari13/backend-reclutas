@@ -5,11 +5,11 @@ const genericGet = require("../../middlewares/helper-middlewares/generic-get");
 router.use(verifyUsers);
 
 router.use("/user-media",(req,res,next)=>{req["locals"] = {
-  data:true
+  media:true
 };next()},genericGet);
 
 router.use("/user-data",(req,res,next)=>{req["locals"] = {
-    media:true
+    data:true
 };next()},genericGet);
 
 

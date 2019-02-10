@@ -5,9 +5,9 @@ module.exports = {
         tables.forEach(function (table) {
             let columns = Object.keys(arr[table]);
             columns.forEach(function (column) {
-                if(column.indexOf("-img") !== -1){
-                    console.log("hi");
-                    let end = column.indexOf("-img");
+                if(column.indexOf("_img") !== -1){
+                    //console.log("hi");
+                    let end = column.indexOf("_img");
                     (arr[table])[column.slice(0,end)] = Buffer.from((arr[table])[column],'base64');
                     delete (arr[table])[column];
                 }
