@@ -1,14 +1,16 @@
 const connObj = require("../../helpers/connectdb").getConnectionObject();
+require("../../helpers/create-associations");
 let findParams = {};
 module.exports  = async function(req,res,next) {
-    resolveFindParams(req.body.query,{});
-    let workingModel = connObj.import("../../models"+req.body.query[0]);
+    let rootModel = (Object.keys(req.body.query))[0];
+    let workingModel = connObj.import("../../models/"+rootModel);
+    resolveFindParams(req.body.query[rootModel],{},rootModel);
     let data = await workingModel.findAll(findParams);
     data = refineData(data);
     res.send(data);
 };
 
-function resolveFindParams(root,currentScope){
+function resolveFindParams(root,currentScope,previousModel){
     let keys = Object.keys(root);
     let count = 0;
     for(let i=0;i<keys.length;i++){
@@ -27,39 +29,44 @@ function resolveFindParams(root,currentScope){
                 currentScope = findParams;
             if (!currentScope.hasOwnProperty("include"))
                 currentScope["include"] = [];
-            currentScope["include"][count] = {model: keys[i]};
+            currentScope["include"][count] = getIncludeParams(keys[i],previousModel);
             count++;
-            resolveFindParams(root[keys[i]],currentScope["include"][count - 1]);
+            resolveFindParams(root[keys[i]],currentScope["include"][count - 1],keys[i]);
         }
     }
 }
 
 function refineData(data){
-
+    data = data.map(data=>data.toJSON());
+    console.log(data[0]);
 }
 
-resolveFindParams({
-    attributes:['user_email'],
-    where:{user_id:26}}
-,{});
-/*resolveFindParams({
-        attributes:['user_id'],
-        student:{
-            attributes:['student_id'],
-            student_abc:{
-                attributes:['studentabc_id'],
-                student_pqr:{
-                    attributes:['studentpqr_id']
-                }
-            }
-        },
-        abc:{
-            attributes:['some_column']
-        }
-},{});*/
+function getIncludeParams(current,previous){
+    let currentModel = connObj.import("../../models/"+current);
+    let previousModel = connObj.import("../../models/"+previous);
+    let key = (new previousModel())._modelOptions.name.plural;
+    if(currentModel.associations[key])
+        return {model:currentModel,through:{attributes:[]}};
+    return {model:currentModel};
+}
 
-const util = require("util");
-console.log(util.inspect(findParams,false,null,true));
+module.exports({body:{
+    query:{
+        student:{
+            attributes:['student_first_name'],
+            parents:{
+                attributes:['parent_name']
+            },
+            student_documents:{
+                attributes:['aadhar_number']
+            },
+            skill:{
+                attributes:['skill_name']
+            },
+            where:{student_id:55}
+        }
+    }
+}},null,null);
 
 /*d
   1. the root could have a where attribute
